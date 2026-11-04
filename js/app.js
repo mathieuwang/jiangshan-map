@@ -79,6 +79,23 @@
   const AUTOPLAY_MAP_CHANGE_TICKS = 10;
   const PERSON_AUTOPLAY_STEP_MS = 2600;
   const PLAY_SPEED_STEPS = [1, 2, 4, 0.5];
+  // Other names for linking people in event text. A profile's `tokens` cannot be used here:
+  // they also hold events and places (虎门, 靖难) and ambiguous titles (武帝, 太宗).
+  const PERSON_LINK_ALT_NAMES = {
+    商鞅: ['卫鞅'],
+    秦始皇: ['嬴政', '秦王政'],
+    隋炀帝: ['杨广'],
+    唐太宗: ['李世民'],
+    唐玄宗: ['李隆基'],
+    苏轼: ['苏东坡'],
+    成吉思汗: ['铁木真'],
+    王阳明: ['王守仁'],
+    北魏孝文帝: ['拓跋宏'],
+    李存勖: ['后唐庄宗'],
+    李煜: ['李后主'],
+  };
+  // Matched first and left unlinked, so 曹魏征西将军 does not read as 魏征.
+  const PERSON_LINK_MASKS = ['曹魏'];
 
   function escHtml(str) {
     return String(str == null ? '' : str)
@@ -6553,6 +6570,7 @@
         this.hoverTip.classList.remove('is-interactive');
       }
 
+      if (!this._personLinkNav) this._personTrail = [];
       this.activePerson = state;
       this.activePersonEventIdx =
         initialIdx >= 0 && initialIdx < events.length ? initialIdx : -1;
@@ -7186,6 +7204,60 @@
       });
     }
 
+    /** Name lookup and matcher for linking people named in event text. Built once per locale. */
+    _personLinkMatcher(isEn) {
+      const profiles = HistoricalAtlasController.PERSON_PROFILES;
+      if (!this._personLinkCache || this._personLinkCache.profiles !== profiles) {
+        this._personLinkCache = { profiles, zh: null, en: null };
+      }
+      const slot = isEn ? 'en' : 'zh';
+      if (this._personLinkCache[slot]) return this._personLinkCache[slot];
+      const byName = new Map();
+      for (const p of profiles) {
+        if (p.isRelic) continue;
+        const names = isEn ? [p.en] : [p.zh, ...(PERSON_LINK_ALT_NAMES[p.zh] || [])];
+        for (const n of names) if (n && n.length >= 2) byName.set(n, p);
+      }
+      const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const names = [...byName.keys()].sort((a, b) => b.length - a.length).map(esc);
+      const pattern = isEn
+        ? `(?<![A-Za-z])(?:${names.join('|')})(?![A-Za-z])`
+        : [...PERSON_LINK_MASKS, ...names].join('|');
+      this._personLinkCache[slot] = { byName, re: new RegExp(pattern, 'g') };
+      return this._personLinkCache[slot];
+    }
+
+    /** Wraps other people's names in link buttons. Event text is plain, with no markup to avoid. */
+    _linkifyPersonText(text, isEn, selfKeys) {
+      if (!text) return '';
+      const { byName, re } = this._personLinkMatcher(isEn);
+      return text.replace(re, (name) => {
+        const p = byName.get(name);
+        if (!p || selfKeys.has(p.key)) return name;
+        const title = isEn ? `View ${p.en}'s life events` : `查看${p.zh}的生平`;
+        return `<button type="button" class="person-link" data-person-key="${escHtml(p.key)}" title="${escHtml(title)}">${name}</button>`;
+      });
+    }
+
+    _openLinkedPerson(key) {
+      const cur = this.activePerson;
+      if (!cur) return;
+      const trail = this._personTrail || (this._personTrail = []);
+      trail.push({ profiles: cur.profiles, idx: this.activePersonEventIdx });
+      this._personLinkNav = true;
+      const opened = this.openPersonChronicle(key, -1);
+      this._personLinkNav = false;
+      if (!opened) trail.pop();
+    }
+
+    _backToLinkedPerson() {
+      const prev = (this._personTrail || []).pop();
+      if (!prev) return;
+      this._personLinkNav = true;
+      this.openPersonChronicle(prev.profiles, prev.idx);
+      this._personLinkNav = false;
+    }
+
     _renderPersonChronicleCard(preserveScroll = false) {
       if (!this.activePerson) return;
       const {
@@ -7345,13 +7417,25 @@
         const summaryTxt = isEn
           ? `${events.length} events · ${dynCount} era${dynCount > 1 ? 's' : ''}${encounterSuffix}`
           : `共 ${events.length} 处史事 · 历 ${dynCount} 朝${encounterSuffix}`;
+        const trail = this._personTrail || [];
+        const backTo = trail.length ? trail[trail.length - 1].profiles : null;
+        const backName = backTo ? backTo.map((p) => (isEn ? p.en : p.zh)).join(' × ') : '';
+        const backBtn = backTo
+          ? `<button type="button" class="gen-filter-pill" id="act-person-back" title="${
+              isEn ? `Back to ${escHtml(backName)}` : `返回${escHtml(backName)}`
+            }">‹ ${escHtml(backName)}</button>`
+          : '';
         subEl.innerHTML =
           `<span>${summaryTxt}</span>` +
           `<span class="person-sub-actions">` +
+          backBtn +
           `<button type="button" class="gen-filter-pill${
             curIdx < 0 ? ' is-active' : ''
           }" id="act-person-overview">${isEn ? 'Overview' : '全图总览'}</button>` +
           `</span>`;
+
+        const backEl = this._id('act-person-back');
+        if (backEl) backEl.addEventListener('click', () => this._backToLinkedPerson());
 
         const ovBtn = this._id('act-person-overview');
         if (ovBtn) {
@@ -7369,6 +7453,7 @@
 
       let activeLi = null;
       let firstSharedLi = null;
+      const selfKeys = new Set((profiles || [profile]).map((p) => p.key));
       events.forEach((ev, idx) => {
         const isShared = Boolean(ev.isSharedEncounter);
         const li = document.createElement('li');
@@ -7425,11 +7510,11 @@
                   (pt) =>
                     `<span class="t-sub person-ev-copy person-ev-subnote">` +
                     `<i class="person-ev-dot" style="background:${pt.color}"></i>` +
-                    `${isEn ? pt.textEn : pt.textZh}` +
+                    `${this._linkifyPersonText(isEn ? pt.textEn : pt.textZh, isEn, selfKeys)}` +
                     `</span>`
                 )
                 .join('')
-            : `<span class="t-sub person-ev-copy">${isEn ? ev.textEn : ev.textZh}</span>`;
+            : `<span class="t-sub person-ev-copy">${this._linkifyPersonText(isEn ? ev.textEn : ev.textZh, isEn, selfKeys)}</span>`;
 
         li.innerHTML =
           `<span class="t-era person-era-col">${leftBadgeHtml}</span>` +
@@ -7438,6 +7523,13 @@
           `${copyHtml}` +
           `${quoteHtml}` +
           `</span>`;
+
+        li.querySelectorAll('.person-link').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation(); // the row's own click would select this event instead
+            this._openLinkedPerson(btn.dataset.personKey);
+          });
+        });
 
         li.addEventListener('pointerenter', (e) => {
           if (e.pointerType !== 'touch') this._setHoveredPersonPin(idx);

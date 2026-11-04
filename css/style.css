@@ -4919,6 +4919,21 @@ html[lang="en"] .genealogy-list li.person-ev-row {
   flex-shrink: 0;
 }
 
+.person-link {
+  padding: 0;
+  border: 0;
+  border-bottom: 1px dotted currentColor;
+  background: none;
+  color: var(--vermilion);
+  font: inherit;
+  cursor: pointer;
+}
+
+.person-link:hover,
+.person-link:focus-visible {
+  border-bottom-style: solid;
+}
+
 .person-ev-copy {
   margin-top: 2px;
   font-family: var(--serif-stack);
