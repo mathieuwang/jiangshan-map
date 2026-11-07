@@ -25,7 +25,6 @@
   const LUOYANG = [112.45, 34.62];
   const TAIYUAN = [112.55, 37.87];
   const LINGWU = [106.28, 38.09];
-  const CHENGDU = [104.06, 30.67];
   const SHANJUN = [111.2, 34.77];
   const YONGQIU = [114.78, 34.55];
   const PINGYUAN = [116.4, 37.16];
@@ -120,6 +119,7 @@
           others: ['tangsuzong'],
           from: { yangguifei: CHANGAN, yangguozhong: CHANGAN, tangsuzong: CHANGAN },
         },
+        { event: 'xz-chengdu', leads: ['tangxuanzong'] },
         { event: 'ex-lingwu', month: 7, leads: ['tangsuzong', 'guoziyi'] },
         { event: 'ex-anlushan-death', leads: ['anqingxu', 'anlushan'] },
         { event: 'lgb-taiyuan', leads: ['shisiming', 'liguangbi'] },
@@ -139,7 +139,6 @@
         {
           event: 'tsz-return',
           leads: ['tangsuzong', 'tangxuanzong'],
-          from: { tangxuanzong: CHENGDU },
         },
         { event: 'sm-surrender', leads: ['shisiming'] },
         {
