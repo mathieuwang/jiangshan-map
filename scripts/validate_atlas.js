@@ -4014,6 +4014,11 @@ function main() {
           assert(castIds.has(id), `Storyline ${story.key} step ${label} names unknown cast ${id}`);
         }
       }
+      for (const step of story.steps) {
+        for (const id of Object.keys(step.after || {})) {
+          assert(castIds.has(id), `Storyline ${story.key} moves unknown cast ${id}`);
+        }
+      }
       const state = ctrl._buildStorylineState(ctrl._storylineProfile(story.key));
       assert(
         state && state.events.length === story.steps.length,

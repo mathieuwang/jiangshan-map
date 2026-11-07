@@ -5,13 +5,15 @@
 //        member is a name only, so a story never depends on adding a full profile first.
 // protagonist: optional cast id for a one-person storyline. That person joins every step as a
 //        lead and has one continuous route, unless a step is marked `side`.
-// steps: { event | milestone, leads, others, from?, at?, month?, hideMonth?, side? }
+// steps: { event | milestone, leads, others, from?, at?, after?, month?, hideMonth?, side? }
 //   event      id of a PLACE_LANDMARK_EVENTS entry
 //   milestone  'dynastyKey:year' of a dynasty milestone
 //   leads      cast ids who are the main participants of this step
 //   others     cast ids who take part in a supporting role
 //   from       { castId: coord } where someone sets out from, when no earlier step places them
 //   at         { castId: coord } where someone is, when that is not the event's site
+//   after      { castId: coord } where someone goes once the step is over, without a step of
+//              their own, so the next steps show them there
 //   month      lunar month for this step, when the event itself has none
 //   hideMonth  true when the month is uncertain: it still orders the step but is not shown
 //   side       true when the step follows someone else and the protagonist stays where they are
@@ -33,6 +35,8 @@
   const YE = [114.35, 36.32];
   const JIANKANG = [118.8, 32.06];
   const HUAYIN = [110.09, 34.57];
+  const JIANGLING = [112.2, 30.35];
+  const GUSHU = [118.5, 31.57];
   const YUNCHENG = [113.69, 31.26];
   const PINGYANG = [111.52, 36.08];
   const CHANGSHAN = [114.57, 38.14];
@@ -405,24 +409,46 @@
         { event: 'fj-birth' },
         { event: 'fj-street' },
         { event: 'fj-longxiang' },
-        { side: true, event: 'wm-huanwen', leads: ['wangmeng', 'huanwen'] },
+        {
+          side: true,
+          event: 'wm-huanwen',
+          leads: ['wangmeng', 'huanwen'],
+          from: { huanwen: JIANGLING },
+        },
         { event: 'wm-meet', leads: ['wangmeng'], from: { wangmeng: HUAYIN } },
         { event: 'fj-sanyuan', leads: ['yaochang'] },
         { event: 'ex-fj-throne', month: 6, others: ['wangmeng'] },
         { event: 'fj-tongbi' },
         { event: 'wm-qiangde', leads: ['wangmeng'] },
         { event: 'fj-shuofang' },
-        { side: true, event: 'ex-fangtou', month: 9, leads: ['huanwen', 'murongchui'] },
+        {
+          side: true,
+          event: 'ex-fangtou',
+          month: 9,
+          leads: ['huanwen', 'murongchui'],
+          from: { huanwen: GUSHU },
+        },
         { event: 'mc-flee', leads: ['murongchui'], others: ['wangmeng'] },
         { event: 'wm-farewell', leads: ['wangmeng'] },
         { side: true, event: 'wm-luchuan', leads: ['wangmeng'], others: ['murongwei'], at: { murongwei: YE } },
         { event: 'fj-anyang', leads: ['wangmeng'] },
         { event: 'fj-ye', leads: ['murongwei'], others: ['wangmeng', 'murongchui'] },
         { event: 'fj-fangtou' },
-        { event: 'wei-move', leads: ['murongwei', 'murongchong'], from: { murongchong: YE } },
+        {
+          event: 'wei-move',
+          leads: ['murongwei', 'murongchong'],
+          from: { murongchong: YE },
+          after: { wangmeng: CHANGAN },
+        },
         { event: 'wm-death', leads: ['wangmeng'] },
         { side: true, milestone: 'dongjin:376', month: 12 },
-        { side: true, event: 'xy-fall', leads: ['fupi', 'zhuxu'], from: { fupi: CHANGAN } },
+        {
+          side: true,
+          event: 'xy-fall',
+          leads: ['fupi', 'zhuxu'],
+          from: { fupi: CHANGAN },
+          after: { zhuxu: CHANGAN },
+        },
         { event: 'fj-fenzu', leads: ['fupi'] },
         { event: 'fj-debate', leads: ['furong'] },
         { event: 'fj-march', others: ['furong', 'murongchui'] },

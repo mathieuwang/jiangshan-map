@@ -6864,6 +6864,7 @@
           personStepNum: idx + 1,
           globalIdx: idx,
         });
+        for (const [id, coord] of Object.entries(step.after || {})) lastPos.set(id, coord);
       }
       if (!events.length) return null;
       return {
