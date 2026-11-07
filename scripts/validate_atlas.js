@@ -3999,6 +3999,10 @@ function main() {
         );
         assert(story.sides[c.side], `Storyline ${story.key} cast ${c.id} has unknown side ${c.side}`);
       }
+      assert(
+        !story.protagonist || castIds.has(story.protagonist),
+        `Storyline ${story.key} protagonist is not in its cast`
+      );
       for (const step of story.steps) {
         const label = step.event || step.milestone;
         assert(

@@ -6783,17 +6783,25 @@
         const p = HistoricalAtlasController.PERSON_PROFILES.find((x) => x.key === c.person);
         return p ? p[field] : c.id;
       };
+      const hero = story.protagonist || null;
+      const heroMember = hero ? castById.get(hero) : null;
+      const heroProfile =
+        heroMember &&
+        HistoricalAtlasController.PERSON_PROFILES.find((x) => x.key === heroMember.person);
+      const heroBirth = heroProfile && heroProfile.span ? heroProfile.span[0] : null;
+      const stepLeads = (step) =>
+        hero && !step.side ? [hero, ...(step.leads || [])] : step.leads || [];
       const lastPos = new Map();
       const lastStepOf = new Map();
       story.steps.forEach((step, i) => {
-        for (const id of [...(step.leads || []), ...(step.others || [])]) lastStepOf.set(id, i);
+        for (const id of [...stepLeads(step), ...(step.others || [])]) lastStepOf.set(id, i);
       });
       const events = [];
       for (const [stepIdx, step] of story.steps.entries()) {
         const base = this._resolveStorylineEvent(step);
         if (!base) continue;
         const roster = [
-          ...(step.leads || []).map((id) => [id, true]),
+          ...stepLeads(step).map((id) => [id, true]),
           ...(step.others || []).map((id) => [id, false]),
         ];
         const cast = [];
@@ -6824,7 +6832,7 @@
           const side = (story.sides && story.sides[c.side]) || {};
           bystanders.push({
             id: c.id,
-            isLead: false,
+            isLead: c.id === hero,
             zh: personName(c, 'zh'),
             en: personName(c, 'en'),
             color: side.color || '#bd2d22',
@@ -6843,6 +6851,10 @@
           prio: 1,
           cast,
           bystanders,
+          onRoute: Boolean(hero && !step.side),
+          // 虚岁, the way the histories count age: the year of birth is age 1.
+          heroAge: heroBirth !== null ? base.year - heroBirth + 1 : null,
+          heroPos: hero && step.side ? lastPos.get(hero) || null : null,
           personIdx: 0,
           personKey: profile.key,
           personZh: profile.zh,
@@ -6884,21 +6896,43 @@
       for (const story of HistoricalAtlasController.STORYLINES) {
         const member = story.cast.find((c) => c.person === personKey);
         if (!member) continue;
-        const stepIdx = story.steps.findIndex((s) =>
-          [...(s.leads || []), ...(s.others || [])].includes(member.id)
-        );
+        const stepIdx =
+          story.protagonist === member.id
+            ? 0
+            : story.steps.findIndex((s) =>
+                [...(s.leads || []), ...(s.others || [])].includes(member.id)
+              );
         if (stepIdx >= 0) out.push({ story, stepIdx });
       }
       return out;
     }
 
+    /** The protagonist's whole path so far, as one route that grows with each step. */
+    _renderStorylineHeroRoute(curIdx) {
+      const { events } = this.activePerson;
+      const segments = [];
+      let prev = null;
+      events.forEach((ev, idx) => {
+        if (!ev.onRoute) return;
+        if (prev && (curIdx < 0 || idx <= curIdx)) {
+          const seg = this._buildJourneySegmentInfo(prev.coord, ev.coord, null, 0);
+          if (seg) segments.push({ ...seg, toIdx: idx });
+        }
+        prev = ev;
+      });
+      const first = events.find((ev) => ev.onRoute);
+      if (segments.length) this._renderCartographicTrajectory(segments, curIdx, first.personColor);
+    }
+
     /** Draws where each participant came from for this step, with the existing route arrow. */
-    _renderStorylineMoves(curEv) {
+    _renderStorylineMoves(curEv, curIdx) {
+      const heroId = this.activePerson.profile.storyline.protagonist;
+      if (heroId) this._renderStorylineHeroRoute(curIdx);
       if (!curEv || !Array.isArray(curEv.cast)) return;
       const drawn = new Set();
       let lane = 0;
       for (const c of curEv.cast) {
-        if (!c.from) continue;
+        if (!c.from || c.id === heroId) continue;
         const key = `${c.from.join(',')}>${c.to.join(',')}|${c.color}`;
         if (drawn.has(key)) continue;
         drawn.add(key);
@@ -7325,6 +7359,7 @@
       if (!ev || !ev.coord) return;
       if (ev.cast && ev.cast.some((c) => c.from || c.to !== ev.coord)) {
         const pts = [ev.coord];
+        if (ev.heroPos) pts.push(ev.heroPos);
         for (const c of ev.cast) {
           pts.push(c.to);
           if (c.from) pts.push(c.from);
@@ -7526,7 +7561,7 @@
         }
         this._renderCartographicTrajectory(segments, trCurIdx, tr.color || '#bd2d22', dimmed);
       }
-      if (isStory) this._renderStorylineMoves(curEv);
+      if (isStory) this._renderStorylineMoves(curEv, curIdx);
 
       // Deduplicate city labels so repeated visits to the same city only print its name once
       const labelOwnerByIdx = new Set();
@@ -8002,7 +8037,10 @@
             `<span class="person-idx-line"><span class="cr-stop-num">${idx + 1}</span><span>${yrStr}</span></span>` +
             `<span class="t-sub">${
               ev.shownMonth ? `${this._storyMonthLabel(ev.shownMonth, isEn)} · ` : ''
-            }${this.dynastyName(ev.dynasty)}</span>`;
+            }${this.dynastyName(ev.dynasty)}</span>` +
+            (ev.heroAge
+              ? `<span class="t-sub story-hero-age">${isEn ? `Age ${ev.heroAge}` : `${ev.heroAge}岁`}</span>`
+              : '');
         }
 
         const copyHtml =

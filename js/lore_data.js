@@ -4049,6 +4049,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "长安",
       "siteEn": "Chang'an",
+      "id": "ex-changan-fall",
       "zh": "安史叛军破潼关陷长安，唐玄宗仓皇奔蜀",
       "en": "An Lushan rebels capture Chang’an, sparking the Mawei Mutiny as Emperor Xuanzong flees to Shu"
     },
@@ -8089,6 +8090,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "洛阳普施寺",
       "siteEn": "Luoyang",
+      "id": "ex-wangwei",
       "zh": "安史叛军陷长安执王维拘洛阳普施寺，王维服药称喑暗赋悲诗",
       "en": "Held captive at Pushi Temple in Luoyang by rebels, Wang Wei feigns illness and writes loyal verse",
       "persons": [
@@ -8104,6 +8106,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "泰山（兖州）",
       "siteEn": "Mount Tai",
+      "id": "ex-df-taishan",
       "zh": "青年杜甫壮游齐鲁仰望东岳，豪吟《望岳》“会当凌绝顶，一览众山小”",
       "en": "Young Du Fu travels Shandong and composes Gazing on Mount Tai, vowing to scale its highest peak"
     },
@@ -8116,6 +8119,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "洛阳",
       "siteEn": "Luoyang",
+      "id": "ex-df-luoyang",
       "zh": "李白赐金放还东至洛阳，与杜甫初次相遇结下深厚诗谊",
       "en": "Granted gold to leave court, Li Bai meets the younger Du Fu for the first time in Luoyang",
       "persons": [
@@ -8133,6 +8137,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "长安",
       "siteEn": "Chang'an",
+      "id": "ex-df-fengxian",
       "zh": "杜甫困守长安十年，赴奉先探亲闻幼子饿死作咏怀长诗",
       "en": "After ten poor years in Chang'an, Du Fu journeys to Fengxian and laments pre-rebellion inequality"
     },
@@ -8145,6 +8150,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "成都浣花溪草堂",
       "siteEn": "Thatched Cottage, Chengdu",
+      "id": "ex-df-caotang",
       "zh": "杜甫入蜀于成都浣花溪畔营建草堂，与彭州刺史高适唱和往还",
       "en": "Refugeeing in Sichuan, Du Fu builds his Chengdu Thatched Cottage and exchanges verse with Gao Shi",
       "persons": [
@@ -8177,6 +8183,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "长安",
       "siteEn": "Chang'an",
+      "id": "ex-df-cien",
       "zh": "高适与杜甫、岑参、薛据同登长安慈恩寺浮图，赋诗凭高抒怀",
       "en": "Gao Shi, Du Fu, Cen Shen, and Xue Ju ascend the Giant Wild Goose Pagoda in Chang'an and trade poems",
       "persons": [
@@ -8210,6 +8217,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "夔州白帝城",
       "siteEn": "Kuizhou (Fengjie, Three Gorges)",
+      "id": "ex-df-kuizhou",
       "zh": "杜甫寓居夔州两年诗兴大发，秋日登高赋千古七律《登高》",
       "en": "Living at Kuizhou above the Three Gorges, aging Du Fu composes his autumn masterpiece Climbing High"
     },
@@ -8222,6 +8230,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "潭州湘江（长沙）",
       "siteEn": "Xiang River, Tanzhou (Changsha)",
+      "id": "ex-df-end",
       "zh": "杜甫出峡登岳阳楼凭轩涕泗，暮年漂泊湘江病逝舟中",
       "en": "Sailing past Yueyang Tower out of the gorges, Du Fu spends his final days drifting on the Xiang River"
     },
@@ -10408,6 +10417,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "长安",
       "siteEn": "Chang'an",
+      "id": "ex-df-chunwang",
       "zh": "杜甫困居叛军所陷长安赋《春望》“国破山河在”，夏潜奔凤翔",
       "en": "Trapped in rebel-held Chang'an, Du Fu writes “Spring View”, then escapes to Fengxiang",
       "month": 3
@@ -10421,6 +10431,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "秦州（天水）",
       "siteEn": "Qinzhou (Tianshui)",
+      "id": "ex-df-qinzhou",
       "zh": "杜甫途经新安石壕作“三吏”“三别”，秋弃官携家客居秦州",
       "en": "Du Fu writes the “Three Officials” and “Three Partings”, then resigns and moves his family to Qinzhou",
       "month": 7
@@ -10434,6 +10445,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "梓州（三台）",
       "siteEn": "Zizhou (Santai)",
+      "id": "ex-df-zizhou",
       "zh": "杜甫客居梓州闻官军收复河南河北，狂喜赋“便下襄阳向洛阳”",
       "en": "In Zizhou, Du Fu hears the imperial army has retaken Henan and Hebei and writes his most joyous poem",
       "month": 3
@@ -13073,6 +13085,7 @@ window.ATLAS_LORE_DATA = {
         "dufu",
         "gaoshi"
       ],
+      "id": "ex-df-suiyang",
       "zh": "李白、杜甫与高适同游梁宋睢阳，登吹台怀古、纵猎孟诸",
       "en": "Li Bai, Du Fu, and Gao Shi roam Liang-Song around Suiyang, hunting at Mengzhu and writing verse"
     },

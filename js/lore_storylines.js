@@ -3,7 +3,9 @@
 //
 // cast:  { id, person?, zh?, en?, side }. `person` links a PERSON_PROFILES key; without it the
 //        member is a name only, so a story never depends on adding a full profile first.
-// steps: { event | milestone, leads, others, from?, at?, month?, hideMonth? }
+// protagonist: optional cast id for a one-person storyline. That person joins every step as a
+//        lead and has one continuous route, unless a step is marked `side`.
+// steps: { event | milestone, leads, others, from?, at?, month?, hideMonth?, side? }
 //   event      id of a PLACE_LANDMARK_EVENTS entry
 //   milestone  'dynastyKey:year' of a dynasty milestone
 //   leads      cast ids who are the main participants of this step
@@ -12,6 +14,7 @@
 //   at         { castId: coord } where someone is, when that is not the event's site
 //   month      lunar month for this step, when the event itself has none
 //   hideMonth  true when the month is uncertain: it still orders the step but is not shown
+//   side       true when the step follows someone else and the protagonist stays where they are
 // A cast member stays where the last step left them, and only people named in a step move.
 // A name stays on the map from the first step that names a person through the last one.
 (function () {
@@ -294,6 +297,71 @@
         { event: 'yue-death', leads: ['simayue'] },
         { event: 'yue-ningping', leads: ['shile'] },
         { milestone: 'xijin:311', leads: [] },
+      ],
+    },
+    {
+      key: 'dufu',
+      zh: '杜甫一生',
+      en: 'The Life of Du Fu',
+      subtitleZh: '712—770 · 诗圣的漂泊与友人',
+      subtitleEn: '712–770, a poet’s wandering life and friendships',
+      descZh:
+        '红线是杜甫一生的行迹，随步骤延伸，他始终留在地图上。部分步骤转到友人与时局：李白流放，房琯兵败，严武镇蜀，此时杜甫停在原地。蓝色为友人，绿色为帝王。路线仅示意起止，并非实际行程。',
+      descEn:
+        'The red line is Du Fu’s path through life, growing with each step, and he stays on the map throughout. Some steps turn to friends and events, such as Li Bai’s exile or Fang Guan’s defeat, while Du Fu stays where he is. Blue marks friends and green emperors. Lines show only where people set out and arrived, not their actual routes.',
+      aliases: ['杜甫', '杜工部', '诗圣', 'Du Fu'],
+      dynastyKey: 'tang',
+      span: [712, 770],
+      protagonist: 'dufu',
+      sides: {
+        hero: { zh: '杜甫', en: 'Du Fu', color: '#c4281c' },
+        friend: { zh: '友人', en: 'Friends', color: '#233b8e' },
+        court: { zh: '帝王', en: 'Emperors', color: '#186a4b' },
+      },
+      cast: [
+        { id: 'dufu', person: 'dufu', side: 'hero' },
+        { id: 'libai', person: 'libai', side: 'friend' },
+        { id: 'gaoshi', person: 'gaoshi', side: 'friend' },
+        { id: 'wangwei', person: 'wangwei', side: 'friend' },
+        { id: 'fangguan', person: 'fangguan', side: 'friend' },
+        { id: 'yanwu', person: 'yanwu', side: 'friend' },
+        { id: 'tangxuanzong', person: 'tangxuanzong', side: 'court' },
+        { id: 'tangsuzong', person: 'tangsuzong', side: 'court' },
+      ],
+      steps: [
+        { event: 'df-birth' },
+        { event: 'df-exam' },
+        { event: 'ex-df-taishan' },
+        { event: 'ex-df-luoyang', leads: ['libai'], from: { libai: CHANGAN } },
+        { event: 'ex-df-suiyang', leads: ['libai', 'gaoshi'] },
+        { event: 'df-fu', others: ['tangxuanzong'] },
+        { event: 'ex-df-cien', leads: ['gaoshi'] },
+        { event: 'ex-df-fengxian' },
+        { side: true, event: 'ex-changan-fall', month: 6, leads: ['tangxuanzong'] },
+        { side: true, event: 'fg-xuanzong', leads: ['fangguan', 'tangxuanzong'] },
+        { side: true, event: 'ex-wangwei', month: 8, hideMonth: true, leads: ['wangwei'] },
+        { side: true, event: 'fg-chentao', leads: ['fangguan'] },
+        { side: true, event: 'lb-yongwang', leads: ['libai'] },
+        { event: 'ex-df-chunwang' },
+        { event: 'df-shiyi', others: ['tangsuzong'] },
+        { event: 'df-plea', leads: ['fangguan'], others: ['tangsuzong'] },
+        { event: 'df-huazhou' },
+        { side: true, event: 'lb-yelang', leads: ['libai'] },
+        { event: 'ex-df-qinzhou' },
+        { event: 'df-tonggu' },
+        { event: 'ex-df-caotang', leads: ['gaoshi'] },
+        { event: 'df-yanwu', leads: ['yanwu'] },
+        { side: true, event: 'lb-death', leads: ['libai'] },
+        { event: 'ex-df-zizhou' },
+        { side: true, event: 'fg-death', leads: ['fangguan'] },
+        { event: 'df-drunk', leads: ['yanwu'] },
+        { side: true, event: 'yw-tibet', leads: ['yanwu'] },
+        { event: 'yw-death', leads: ['yanwu'] },
+        { event: 'df-dongshu' },
+        { event: 'ex-df-kuizhou' },
+        { event: 'df-xia' },
+        { event: 'df-leiyang' },
+        { event: 'ex-df-end' },
       ],
     },
   ];

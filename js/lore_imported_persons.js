@@ -381,6 +381,33 @@
     },
   ];
 
+  PROFILES.push(
+    {
+      key: 'yanwu',
+      zh: '严武',
+      en: 'Yan Wu',
+      courtesyZh: '严挺之之子 · 成都尹 · 杜甫世交',
+      courtesyEn: 'Governor of Chengdu and family friend of Du Fu',
+      dynastyKey: 'tang',
+      span: [726, 765],
+      spanBasis: 'source',
+      aliases: ['郑国公'],
+      tokens: ['严武'],
+    },
+    {
+      key: 'fangguan',
+      zh: '房琯',
+      en: 'Fang Guan',
+      courtesyZh: '唐肃宗宰相 · 杜甫旧交',
+      courtesyEn: 'Chief minister under Suzong and old friend of Du Fu',
+      dynastyKey: 'tang',
+      span: [697, 763],
+      spanBasis: 'source',
+      aliases: ['房次律'],
+      tokens: ['房琯'],
+    }
+  );
+
   const known = new Set(lore.PERSON_PROFILES.map((p) => p.key));
   for (const p of PROFILES) if (!known.has(p.key)) lore.PERSON_PROFILES.push(p);
 })();

@@ -13,6 +13,19 @@
   if (!lore || !Array.isArray(lore.PLACE_LANDMARK_EVENTS)) return;
 
   const PLACES = {
+    gongxian: [[113.03, 34.73], '巩县（巩义）', 'Gong County (Gongyi)', 'atlas'],
+    caotang: [[104.03, 30.66], '成都浣花里', 'Huanhua, Chengdu', 'atlas'],
+    zizhou: [[105.09, 31.09], '东蜀（梓州）', 'Eastern Sichuan (Zizhou)', 'atlas'],
+    jiangling: [[112.2, 30.35], '江陵', 'Jiangling', 'atlas'],
+    puan: [[105.55, 32.03], '普安郡（剑阁）', 'Pu’an (Jiange)', 'approx'],
+    chentao: [[108.71, 34.33], '陈涛斜（咸阳）', 'Chentaoxie (Xianyang)', 'approx'],
+    xuanzhou: [[118.76, 30.95], '宣州（宣城）', 'Xuanzhou (Xuancheng)', 'approx'],
+    huazhou: [[109.76, 34.51], '华州', 'Huazhou', 'approx'],
+    yelang: [[106.9, 28.15], '夜郎（桐梓）', 'Yelang (Tongzi)', 'approx'],
+    tonggu: [[105.73, 33.75], '同谷（成县）', 'Tonggu (Chengxian)', 'approx'],
+    langzhou: [[106.0, 31.58], '阆州', 'Langzhou', 'approx'],
+    dangguo: [[103.17, 31.43], '当狗城（理县）', 'Dangguo Fortress (Lixian)', 'approx'],
+    leiyang: [[112.85, 26.42], '耒阳', 'Leiyang', 'approx'],
     ye: [[114.35, 36.32], '邺城', 'Ye', 'atlas'],
     xiangyang: [[112.14, 32.04], '襄阳', 'Xiangyang', 'atlas'],
     langya: [[118.35, 35.06], '琅琊（临沂）', 'Langya (Linyi)', 'atlas'],
@@ -127,6 +140,29 @@
     ['ph-death', 765, 9, 'lingwu', '仆固怀恩引吐蕃、回纥南犯，途中得疾，死于灵武', 'Leading Tibetan and Uyghur forces against the Tang, Pugu Huai’en falls ill and dies at Lingwu', ['puguhuaien'], '卷121', '九月九日，死於靈武', 'stated'],
   ];
 
+  const JIU_TANG_DUFU_EVENTS = [
+    ['df-birth', 712, null, 'gongxian', '杜甫生于河南巩县，家世本出襄阳，祖父为杜审言', 'Du Fu is born at Gong County in Henan, grandson of the courtier Du Shenyan', ['dufu'], '卷190下', '本襄陽人，後徙河南鞏縣', 'inferred', '生年据通说；本传年五十九与卒于770年相合，仅其永泰二年之说不合'],
+    ['df-exam', 735, null, 'luoyang', '杜甫赴洛阳应进士科考试，未能及第', 'Du Fu sits the imperial examination at Luoyang and fails', ['dufu'], '卷190下', '甫天寳初應進士不第', 'inferred', '本传作天宝初；年份与地点从通说开元二十三年前后在洛阳'],
+    ['df-fu', 751, null, 'changan', '杜甫献《三大礼赋》，唐玄宗奇之，召试文章授官', 'Du Fu presents three rhapsodies, impresses Emperor Xuanzong and is tested for office', ['dufu', 'tangxuanzong'], '卷190下', '召試文章，授京兆府兵曹叅軍', 'inferred', '本传作天宝末，年份据通说；底本“玄”字残损'],
+    ['fg-xuanzong', 756, 7, 'puan', '房琯独驰蜀路，于普安谒唐玄宗，当日拜相', 'Fang Guan rides alone after the fleeing court and is made chief minister by Xuanzong at Pu’an', ['fangguan', 'tangxuanzong'], '卷111', '七月，至普安郡謁見，玄宗大悅', 'stated'],
+    ['fg-chentao', 756, 10, 'chentao', '房琯用车战法进军收京，败于陈涛斜，死伤四万余人', 'Fang Guan’s attempt to retake the capital with war chariots ends in disaster at Chentaoxie', ['fangguan'], '卷111', '二軍先遇賊於咸陽縣之陳濤斜，接戰，官軍敗績', 'stated'],
+    ['lb-yongwang', 756, 12, 'xuanzhou', '李白在宣州谒永王李璘，入其幕府为从事', 'Li Bai joins the staff of Prince Yong at Xuanzhou', ['libai'], '卷190下', '白在宣州謁見，遂辟爲從事', 'inferred', '史文未记年月'],
+    ['df-shiyi', 757, 5, 'fengxiang', '杜甫逃离长安谒唐肃宗，拜右拾遗', 'Du Fu escapes the occupied capital, reaches Emperor Suzong and is made a court reminder', ['dufu', 'tangsuzong'], '卷190下', '於彭原郡拜右拾遺', 'inferred', '本传系于十五载彭原；通说至德二载在凤翔，官左拾遗'],
+    ['df-plea', 757, 5.5, 'fengxiang', '房琯罢相，杜甫上疏力救，触怒唐肃宗', 'Du Fu defends the dismissed Fang Guan and angers Emperor Suzong', ['dufu', 'fangguan', 'tangsuzong'], '卷190下', '甫上疏言琯有才，不宜罷免', 'stated', '月份据卷111'],
+    ['df-huazhou', 758, 6, 'huazhou', '杜甫受房琯牵连，出为华州司功参军', 'Caught up in Fang Guan’s fall, Du Fu is sent out to a minor post at Huazhou', ['dufu', 'fangguan'], '卷190下', '出甫為華州司功叅軍', 'stated', '月份据卷111房琯贬邠州'],
+    ['lb-yelang', 758, null, 'yelang', '永王兵败，李白坐罪长流夜郎', 'After Prince Yong’s defeat Li Bai is sentenced to exile in distant Yelang', ['libai'], '卷190下', '永王謀亂，兵敗，白坐長流夜郎', 'inferred', '史文未记年'],
+    ['df-tonggu', 759, 10, 'tonggu', '杜甫寓居同谷，负薪采稆，儿女饿死数人', 'Living at Tonggu, Du Fu gathers firewood and wild grain while his children starve', ['dufu'], '卷190下', '自負薪採稆，兒女餓殍者數人', 'inferred', '月份据通说'],
+    ['df-yanwu', 761, 12, 'caotang', '严武镇成都，奏杜甫为节度参谋，待遇甚隆', 'Yan Wu takes charge at Chengdu, hires his old family friend Du Fu and treats him generously', ['dufu', 'yanwu'], '卷190下', '武與甫世舊，待遇甚隆', 'stated', '本传作上元二年冬'],
+    ['lb-death', 762, null, 'xuanzhou', '李白遇赦得还，饮酒过度，醉死于宣城', 'Pardoned and free again, Li Bai drinks himself to death at Xuancheng', ['libai'], '卷190下', '竟以飲酒過度，醉死於宣城', 'inferred', '史文未记年'],
+    ['fg-death', 763, 8, 'langzhou', '房琯应召赴京，途中病卒于阆州僧舍', 'Recalled to the capital, Fang Guan falls ill and dies in a Langzhou monastery', ['fangguan'], '卷111', '廣德元年八月四日，卒於閬州僧舍，時年六十七', 'stated'],
+    ['df-drunk', 764, null, 'caotang', '杜甫醉登严武之床，瞪视曰“严挺之乃有此儿”，严武不以为忤', 'Drunk, Du Fu climbs on Yan Wu’s couch and taunts him, yet Yan Wu takes no offence', ['dufu', 'yanwu'], '卷190下', '嚴挺之乃有此兒', 'inferred', '本传未系年'],
+    ['yw-tibet', 764, 10, 'dangguo', '严武破吐蕃七万余众，拔当狗城，取盐川城', 'Yan Wu defeats a Tibetan force of seventy thousand and takes Dangguo Fortress', ['yanwu'], '卷117', '廣德二年，破吐蕃七萬余眾，拔當狗城', 'stated'],
+    ['yw-death', 765, 4, 'caotang', '严武病逝成都，杜甫失去依靠', 'Yan Wu dies of illness, leaving Du Fu without a patron in Chengdu', ['dufu', 'yanwu'], '卷190下', '永泰元年夏，武卒，甫無所依', 'stated', '月份据卷117'],
+    ['df-dongshu', 765, null, 'zizhou', '杜甫离成都东下投奔故友，抵达时故友已逝', 'Du Fu leaves Chengdu to join Gao Shi in eastern Sichuan, only to find him dead', ['dufu'], '卷190下', '乃遊東蜀依高適。旣至而適卒', 'stated', '卷111高适卒于永泰元年正月，早于严武，本传此节或误'],
+    ['df-xia', 768, null, 'jiangling', '杜甫举家避乱下峡，抵江陵又逢兵乱，转入湘江', 'Du Fu takes his family down the Yangtze gorges, only to find unrest at Jiangling', ['dufu'], '卷190下', '扁舟下峽，未維舟而江陵亂', 'inferred', '本传系于永泰元年之后，年份据通说'],
+    ['df-leiyang', 770, 4, 'leiyang', '杜甫游岳庙阻水，旬日不得食，耒阳聂令棹舟迎还', 'Cut off by floods for ten days without food, Du Fu is rescued by the magistrate of Leiyang', ['dufu'], '卷190下', '耒陽聶令知之，自棹舟迎甫而還', 'inferred', '本传作永泰二年卒于耒阳；通说大历五年卒于湘江舟中，年份从通说'],
+  ];
+
   // The atlas's Western Jin begins in 280, so earlier Jin events sit under the Three Kingdoms period.
   const JIN_EARLY_EVENTS = [
     ['wg-shu', 264, null, 'chengdu', '卫瓘监军入蜀，奉命收捕邓艾，又平钟会之乱', 'Wei Guan, army supervisor in Shu, arrests Deng Ai on orders and helps end Zhong Hui’s revolt', ['weiguan'], '卷36', '會遣瓘先收艾', 'inferred', '本传未系年，据平蜀之事'],
@@ -175,6 +211,7 @@
 
   const SOURCES = [
     ['旧唐书', 'tang', JIU_TANG_EVENTS],
+    ['旧唐书', 'tang', JIU_TANG_DUFU_EVENTS],
     ['晋书', 'sanguo', JIN_EARLY_EVENTS],
     ['晋书', 'xijin', JIN_EVENTS],
   ];
