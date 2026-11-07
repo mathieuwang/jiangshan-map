@@ -6771,7 +6771,7 @@
         textZh: lm.zh,
         textEn: lm.en || lm.zh,
         isMapChange: false,
-        quoteZh: lm.quote ? `${lm.quote}（《旧唐书》${lm.juan}）` : '',
+        quoteZh: lm.quote ? `${lm.quote}（《${lm.book}》${lm.juan}）` : '',
       };
     }
 

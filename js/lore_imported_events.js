@@ -1,7 +1,8 @@
-// Events of the An Lushan Rebellion (安史之乱) drawn from the 《旧唐书》, for the storyline demo.
+// Events imported from the standard histories, for storylines.
 // Load after lore_data.js. Each event follows the PLACE_LANDMARK_EVENTS shape, plus:
 //   id         stable reference for storylines
-//   juan       chapter of the 《旧唐书》 the quote comes from
+//   book       the history the event comes from
+//   juan       chapter of that history the quote comes from
 //   quote      exact wording of the Wikisource transcription, checked by script
 //   yearBasis  'stated' (the text dates it) or 'inferred' (placed by context or outside knowledge)
 //   siteBasis  'atlas' (coordinates reused from atlas data) or 'approx' (estimated, not surveyed)
@@ -12,6 +13,22 @@
   if (!lore || !Array.isArray(lore.PLACE_LANDMARK_EVENTS)) return;
 
   const PLACES = {
+    ye: [[114.35, 36.32], '邺城', 'Ye', 'atlas'],
+    xiangyang: [[112.14, 32.04], '襄阳', 'Xiangyang', 'atlas'],
+    langya: [[118.35, 35.06], '琅琊（临沂）', 'Langya (Linyi)', 'atlas'],
+    chengdu: [[104.07, 30.67], '成都', 'Chengdu', 'atlas'],
+    youzhou: [[116.4, 39.9], '幽州', 'Youzhou', 'atlas'],
+    xuchang: [[113.85, 34.03], '许昌', 'Xuchang', 'atlas'],
+    jinyong: [[112.6, 34.72], '洛阳金墉城', 'Jinyong Fortress, Luoyang', 'atlas'],
+    dangyin: [[114.36, 35.92], '荡阴（汤阴）', 'Dangyin (Tangyin)', 'atlas'],
+    zuoguo: [[111.1, 37.5], '左国城（离石）', 'Zuoguo (Lishi)', 'atlas'],
+    bashang: [[109.08, 34.3], '灞上（长安）', 'Bashang, near Chang’an', 'atlas'],
+    yangdi: [[113.47, 34.15], '阳翟（禹州）', 'Yangdi (Yuzhou)', 'approx'],
+    wenxian: [[113.08, 34.94], '温县', 'Wen County', 'approx'],
+    qilijian: [[112.58, 34.7], '七里涧（洛阳东）', 'Qili Stream, east of Luoyang', 'approx'],
+    yonggu: [[112.13, 34.72], '雍谷（新安）', 'Yonggu (Xin’an)', 'approx'],
+    xiangxian: [[115.07, 33.4], '项县（沈丘）', 'Xiang County (Shenqiu)', 'approx'],
+    ningping: [[115.2, 33.7], '宁平城', 'Ningping', 'approx'],
     changan: [[108.94, 34.34], '长安', 'Chang’an', 'atlas'],
     luoyang: [[112.45, 34.62], '洛阳', 'Luoyang', 'atlas'],
     fanyang: [[116.4, 39.9], '范阳（北京）', 'Fanyang (Beijing)', 'atlas'],
@@ -51,7 +68,7 @@
   };
 
   // [id, year, month|null, place, zh, en, persons, juan, quote, yearBasis, note?]
-  const RAW = [
+  const JIU_TANG_EVENTS = [
     ['tsz-crown', 738, 6, 'changan', '忠王李亨立为皇太子，即后来的唐肃宗', 'Prince Zhong, Li Heng, the future Emperor Suzong, is named crown prince', ['tangsuzong'], '卷10', '二十六年六月庚子，立上為皇太子', 'stated'],
     ['fcq-petition', 741, null, 'kucha', '封常清投牒求为高仙芝傔从，遭拒后直言“若以貌取人，恐失之子羽”', 'Refused as an orderly for his looks, Feng Changqing rebukes Gao Xianzhi and wins the post', ['fengchangqing', 'gaoxianzhi'], '卷104', '若以貌取人，恐失之子羽矣', 'inferred', '史文仅称开元末之前，年份为推定'],
     ['sm-audience', 742, null, 'changan', '史思明入朝奏事，唐玄宗赐坐，抚其背曰“卿贵在后”', 'Shi Siming reports to court; Emperor Xuanzong pats his back and says his greatness lies ahead', ['shisiming', 'tangxuanzong'], '卷200上', '玄宗撫其背曰：「卿貴在後，勉之。」', 'inferred', '史文作天宝初'],
@@ -110,14 +127,65 @@
     ['ph-death', 765, 9, 'lingwu', '仆固怀恩引吐蕃、回纥南犯，途中得疾，死于灵武', 'Leading Tibetan and Uyghur forces against the Tang, Pugu Huai’en falls ill and dies at Lingwu', ['puguhuaien'], '卷121', '九月九日，死於靈武', 'stated'],
   ];
 
+  // The atlas's Western Jin begins in 280, so earlier Jin events sit under the Three Kingdoms period.
+  const JIN_EARLY_EVENTS = [
+    ['wg-shu', 264, null, 'chengdu', '卫瓘监军入蜀，奉命收捕邓艾，又平钟会之乱', 'Wei Guan, army supervisor in Shu, arrests Deng Ai on orders and helps end Zhong Hui’s revolt', ['weiguan'], '卷36', '會遣瓘先收艾', 'inferred', '本传未系年，据平蜀之事'],
+    ['sl-guanzhong', 270, null, 'changan', '胡烈败亡，都督关中的司马亮救援不进，坐贬平西将军', 'Commander of Guanzhong, Sima Liang fails to relieve Hu Lie in time and is demoted', ['simaliang'], '卷59', '坐是貶為平西將軍', 'inferred', '本传未系年'],
+    ['wg-youzhou', 271, 8, 'youzhou', '卫瓘出镇幽州，离间务桓、力微，北边遂安', 'Sent to hold Youzhou, Wei Guan turns the northern chiefs Wuhuan and Liwei against each other', ['weiguan'], '卷36', '除征北大將軍、都督幽州諸軍事、幽州刺史、護烏桓校尉', 'stated', '年月据校记引武帝纪泰始七年八月'],
+    ['yj-marquis', 276, null, 'luoyang', '杨骏以皇后之父骤居高位，封临晋侯，识者讥之', 'As the empress’s father Yang Jun rises fast and is made Marquis of Linjin, to public criticism', ['yangjun'], '卷40', '後以后父超居重位，自鎮軍將軍遷車騎將軍，封臨晉侯', 'inferred', '本传未系年'],
+    ['sx-origin', 277, null, 'langya', '孙秀起自琅邪小史，累官于赵国，以谄媚得司马伦信任', 'Sun Xiu, a minor clerk from Langya, flatters his way up in the service of Sima Lun', ['sunxiu', 'simalun'], '卷59', '秀起自琅邪小史，累官于趙國', 'inferred', '本传未系年，暂据咸宁中司马伦改封赵王'],
+  ];
+
+  const JIN_EVENTS = [
+    ['sw-chu', 289, null, 'xiangyang', '司马玮徙封楚王，出镇都督荆州诸军事', 'Sima Wei is made Prince of Chu and sent to command Jingzhou', ['simawei'], '卷59', '太康末，徙封于楚，出之國，都督荊州諸軍事', 'inferred', '史文作太康末'],
+    ['lj-luoyang', 289, null, 'luoyang', '陆机与弟陆云入洛拜谒张华，张华称“利获二俊”', 'Lu Ji and his brother reach Luoyang and win the warm patronage of Zhang Hua', ['luji', 'zhanghua'], '卷54', '至太康末，與弟雲俱入洛，造太常張華', 'inferred', '史文作太康末'],    ['yj-regent', 290, 4, 'luoyang', '晋武帝崩，杨骏藏匿诏书，独揽大权辅佐晋惠帝', 'As Emperor Wu dies, Yang Jun hides the edict and takes sole charge of the new Emperor Hui', ['yangjun', 'jinhuidi'], '卷40', '從中書借詔觀之，得便藏匿', 'stated', '月份据卷4'],
+    ['sl-xuchang', 290, 4.1, 'xuchang', '晋武帝崩，杨骏欲讨司马亮，司马亮夜驰许昌得免', 'After Emperor Wu’s death Yang Jun plans to strike Sima Liang, who escapes to Xuchang by night', ['simaliang', 'yangjun'], '卷59', '夜馳赴許昌，故得免', 'stated', '月份据卷4'],
+    ['sw-mourn', 290, 5, 'luoyang', '司马玮入洛奔丧，诸王近路相迎，司马乂独至陵所候之', 'Sima Wei comes to Luoyang for the funeral, and Sima Ai alone waits for him at the tomb', ['simawei', 'simaai'], '卷59', '會楚王瑋奔喪，諸王皆近路迎之，乂獨至陵所，號慟以俟瑋', 'stated', '月份据卷4葬期'],
+    ['yu-heir', 290, 8, 'luoyang', '晋惠帝立广陵王司马遹为皇太子', 'Emperor Hui names Sima Yu, Prince of Guangling, as crown prince', ['simayu', 'jinhuidi'], '卷4', '秋八月壬午，立廣陵王遹爲皇太子', 'stated'],
+    ['yj-death', 291, 3, 'luoyang', '贾南风联司马玮夜发禁军，杨骏逃入马厩被杀，夷三族', 'Jia Nanfeng and Sima Wei move at night; Yang Jun is killed in a stable and his clan destroyed', ['jiananfeng', 'simawei', 'yangjun'], '卷40', '駿逃於馬廄，以戟殺之', 'stated', '月份据卷4'],
+    ['lw-kill', 291, 6, 'luoyang', '贾南风以密诏令司马玮杀辅政的司马亮、卫瓘', 'On Jia Nanfeng’s secret edict, Sima Wei kills the regents Sima Liang and Wei Guan', ['simawei', 'simaliang', 'weiguan', 'jiananfeng'], '卷59', '遂收亮、瓘，殺之', 'stated', '月份据卷4'],
+    ['lw-death', 291, 6.5, 'luoyang', '张华献计以驺虞幡散其军，司马玮被斩，临刑出示青纸诏', 'Zhang Hua’s banner of truce disperses Sima Wei’s troops; he dies holding the secret edict', ['simawei', 'zhanghua'], '卷59', '遣殿中將軍王宮齎騶虞幡麾眾曰：「楚王矯詔。」眾皆釋杖而走', 'stated', '月份据卷4'],
+    ['yu-depose', 299, 12, 'jinyong', '贾南风诬陷太子司马遹谋逆，废为庶人，幽于金墉城', 'Jia Nanfeng frames Crown Prince Sima Yu for treason and has him locked in Jinyong', ['jiananfeng', 'simayu'], '卷4', '十二月壬戌，廢皇太子遹爲庶人', 'stated'],
+    ['yu-death', 300, 3, 'xuchang', '贾南风矫诏遣孙虑至许昌，杀害太子司马遹', 'Jia Nanfeng sends the eunuch Sun Lü to Xuchang, where Crown Prince Sima Yu is beaten to death', ['simayu', 'jiananfeng'], '卷53', '慮以藥杵椎殺之', 'stated'],
+    ['lun-coup', 300, 4, 'luoyang', '司马伦、孙秀矫诏入宫废贾南风，杀张华，司马冏入殿收后', 'Sima Lun and Sun Xiu seize the palace, depose Jia Nanfeng and kill Zhang Hua', ['simalun', 'sunxiu', 'jiananfeng', 'simajiong', 'zhanghua'], '卷31', '繫狗當繫頸，今反繫其尾，何得不然', 'stated', '月份据卷4'],
+    ['jnf-death', 300, 4.2, 'jinyong', '司马伦矫诏遣使持金屑酒，赐贾南风死于金墉城', 'Sima Lun sends gold-laced wine to Jinyong, and Jia Nanfeng is forced to die', ['jiananfeng', 'simalun'], '卷31', '倫乃矯詔遣尚書劉弘等持節齎金屑酒賜后死', 'stated', '月份据卷4'],
+    ['lun-throne', 301, 1, 'luoyang', '司马伦篡位称帝，迁晋惠帝于金墉城，滥封官爵', 'Sima Lun takes the throne, moves Emperor Hui to Jinyong and hands out titles without limit', ['simalun', 'jinhuidi'], '卷59', '貂不足，狗尾續', 'stated', '月份据卷4'],
+    ['jiong-rise', 301, 3, 'yangdi', '司马冏起兵屯阳翟，传檄讨司马伦，司马颖、司马颙、司马乂响应', 'Sima Jiong raises troops at Yangdi against Sima Lun, joined by Sima Ying, Sima Yong and Sima Ai', ['simajiong', 'simaying', 'simayong', 'simaai'], '卷4', '平東將軍、齊王冏起兵以討倫', 'stated'],
+    ['ying-wenxian', 301, 3.5, 'wenxian', '司马颖先败于黄桥，再战温县大破司马伦军，乘胜渡河', 'Beaten at Huangqiao, Sima Ying fights again near Wen County, wins and crosses the Yellow River', ['simaying'], '卷59', '未及溫十餘里，復大戰，猗等奔潰', 'stated', '月份据卷4'],
+    ['lun-fall', 301, 4, 'luoyang', '禁军诛孙秀，司马伦被废赐死，晋惠帝复位', 'Palace troops kill Sun Xiu, Sima Lun is deposed and put to death, and Emperor Hui is restored', ['sunxiu', 'simalun', 'jinhuidi'], '卷4', '禽倫黨孫秀、孫會、許超、士猗、駱休等，皆斬之', 'stated'],
+    ['jiong-regent', 301, 6, 'luoyang', '司马冏入洛辅政，大筑第馆，沉于酒色，不入朝见', 'Sima Jiong takes power in Luoyang, builds lavishly and stops attending court', ['simajiong'], '卷59', '沈於酒色，不入朝見', 'stated', '月份据卷4'],
+    ['ai-jiong', 302, 12, 'luoyang', '司马颙檄讨司马冏，司马乂奉帝攻之，连战三日斩司马冏', 'Backed by Sima Yong, Sima Ai fights for three days in Luoyang and kills Sima Jiong', ['simaai', 'simajiong', 'simayong'], '卷59', '奉天子與冏相攻，起火燒冏府，連戰三日，冏敗，斬之', 'stated', '月份据卷4'],
+    ['zf-march', 303, 8, 'luoyang', '司马颙、司马颖发兵讨司马乂，张方率军逼洛阳', 'Sima Yong and Sima Ying turn on Sima Ai, and their general Zhang Fang advances on Luoyang', ['zhangfang', 'simayong', 'simaying', 'simaai'], '卷4', '八月，河間王顒、成都王穎舉兵討長沙王乂', 'stated'],
+    ['lj-qilijian', 303, 10, 'qilijian', '陆机督军二十余万攻洛，大败于鹿苑，赴七里涧死者如积', 'Lu Ji’s great army is routed by Sima Ai at Luyuan, and the dead choke the Qili Stream', ['luji'], '卷54', '赴七里澗而死者如積焉，水為之不流', 'stated', '月份据卷4'],
+    ['ai-death', 304, 1, 'jinyong', '司马越收司马乂送金墉城，张方部将劫至营中炙杀之', 'Sima Yue seizes Sima Ai and sends him to Jinyong; Zhang Fang’s men take him and burn him alive', ['simaai', 'simayue', 'zhangfang'], '卷59', '就金墉收乂，至營，炙而殺之', 'stated', '卷4系于太安二年十二月癸亥；卷59作正月，校记亦指甲子为正月二十六日'],
+    ['ying-taidi', 304, 3, 'ye', '司马颙表请，司马颖立为皇太弟，遥控朝政于邺', 'At Sima Yong’s request Sima Ying is named imperial heir and rules the court from Ye', ['simaying', 'simayong'], '卷4', '其以穎爲皇太弟', 'stated'],
+    ['dangyin', 304, 7, 'dangyin', '司马越奉晋惠帝北征司马颖，败于荡阴，帝被俘至邺', 'Sima Yue’s campaign for Emperor Hui is crushed at Dangyin, and Sima Ying’s army takes the emperor', ['jinhuidi', 'simayue', 'simaying'], '卷4', '六軍敗績于蕩陰，矢及乘輿，百官分散，侍中嵇紹死之', 'stated'],
+    ['ying-flee', 304, 8, 'luoyang', '王浚攻破邺城，司马颖挟晋惠帝单车奔洛阳', 'Wang Jun’s riders break Ye, and Sima Ying flees to Luoyang in a single cart with Emperor Hui', ['simaying', 'jinhuidi'], '卷4', '穎與帝單車走洛陽', 'stated'],
+    ['zf-abduct', 304, 11, 'changan', '张方劫晋惠帝西迁长安，洛阳积蓄扫地无遗', 'Zhang Fang forces Emperor Hui west to Chang’an after stripping Luoyang of its treasures', ['zhangfang', 'jinhuidi'], '卷4', '方請帝謁廟，因劫帝幸長安', 'stated'],
+    ['yuan-han', 304, 11.2, 'zuoguo', '刘渊离邺归左国城，聚众五万，筑坛称汉王', 'Back at Zuoguo with fifty thousand followers, Liu Yuan builds an altar and declares himself King of Han', ['liuyuan'], '卷101', '元海乃為壇於南郊，僭即漢王位', 'stated', '月份据卷4；卷4八月已记刘元海反于离石'],
+    ['yue-rise', 305, 7, 'xuzhou', '司马越起兵徐州，传檄西迎大驾', 'Sima Yue raises an army in Xuzhou and calls on the east to bring the emperor home', ['simayue'], '卷4', '東海王越嚴兵徐方，將西迎大駕', 'stated'],
+    ['zf-death', 306, 1, 'bashang', '司马越军盛，司马颙惧，令郅辅夜斩张方传首求和', 'Fearing Sima Yue, Sima Yong has Zhang Fang murdered by his friend and sends the head for peace', ['zhangfang', 'simayong'], '卷60', '因火下發函，便斬方頭', 'stated', '月份据卷4'],
+    ['yue-return', 306, 6, 'luoyang', '司马越军破长安，迎晋惠帝还洛阳，大权归于司马越', 'Sima Yue’s army takes Chang’an and Emperor Hui returns to Luoyang, now under Yue’s control', ['simayue', 'jinhuidi'], '卷4', '六月丙辰朔，至自長安，升舊殿，哀感流涕', 'stated'],
+    ['ying-death', 306, 10, 'ye', '司马颖被执囚于邺，长史刘舆矫诏赐死', 'Captured and held in Ye, Sima Ying is put to death on a forged edict', ['simaying'], '卷59', '散發東首臥，命徽縊之，時年二十八', 'stated', '月份据卷4'],
+    ['hd-death', 306, 11, 'luoyang', '晋惠帝崩于显阳殿，史载或云为司马越所鸩', 'Emperor Hui dies in Luoyang, and some blame poison from Sima Yue', ['jinhuidi', 'simayue'], '卷4', '後因食䴵中毒而崩，或云司馬越之鴆', 'stated'],
+    ['yong-death', 306, 12, 'yonggu', '司马颙应诏赴洛，途中被南阳王部将扼杀于车上', 'Summoned to Luoyang, Sima Yong is strangled in his carriage on the road at Yonggu', ['simayong'], '卷59', '南陽王模遣將梁臣于新安雍谷車上扼殺之，並其三子', 'stated', '卷5系于光熙元年十二月；卷59作永嘉初'],
+    ['yue-death', 311, 3, 'xiangxian', '司马越专权失众，忧惧成疾，病死于项', 'Isolated and blamed for the collapse, Sima Yue falls ill and dies at Xiang', ['simayue'], '卷59', '永嘉五年，薨于項', 'stated', '月份据卷5'],
+    ['yue-ningping', 311, 4, 'ningping', '石勒追及宁平城，焚司马越灵柩，王公士庶十余万人被杀', 'Shi Le overtakes the funeral army at Ningping, burns Sima Yue’s coffin and kills over 100,000', ['simayue'], '卷59', '勒命焚越柩曰：「此人亂天下，吾為天下報之，故燒其骨以告天地。」', 'stated', '月份据卷5'],
+  ];
+
+  const SOURCES = [
+    ['旧唐书', 'tang', JIU_TANG_EVENTS],
+    ['晋书', 'sanguo', JIN_EARLY_EVENTS],
+    ['晋书', 'xijin', JIN_EVENTS],
+  ];
   const known = new Set(lore.PLACE_LANDMARK_EVENTS.map((e) => e.id).filter(Boolean));
-  for (const r of RAW) {
+  for (const [book, dynastyKey, rows] of SOURCES) for (const r of rows) {
     const [id, year, month, placeKey, zh, en, persons, juan, quote, yearBasis, note] = r;
     const place = PLACES[placeKey];
     if (!place || known.has(id)) continue;
     const ev = {
       id,
-      dynastyKey: 'tang',
+      dynastyKey,
       year,
       coord: place[0],
       site: place[1],
@@ -126,6 +194,7 @@
       zh,
       en,
       persons,
+      book,
       juan,
       quote,
       yearBasis,
