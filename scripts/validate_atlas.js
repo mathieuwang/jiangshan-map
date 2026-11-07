@@ -225,6 +225,9 @@ function main() {
     'atlas_snapshots.js',
     'map_data.js',
     'lore_data.js',
+    'lore_anshi_persons.js',
+    'lore_anshi_events.js',
+    'lore_storylines.js',
     'i18n_dict.js',
     'zh_hant.js',
   ];
@@ -3972,6 +3975,58 @@ function main() {
     }
     return personEventsCache.get(p.key);
   };
+  // Storylines point at real events and people, and every step resolves in the app.
+  {
+    const stories = loreData.STORYLINES || [];
+    assert(stories.length >= 1, 'lore_storylines.js must define at least one storyline');
+    const profileKeys = new Set(loreData.PERSON_PROFILES.map((p) => p.key));
+    const eventIds = new Set();
+    for (const lm of loreData.PLACE_LANDMARK_EVENTS) {
+      if (!lm.id) continue;
+      assert(!eventIds.has(lm.id), `Duplicate landmark event id: ${lm.id}`);
+      eventIds.add(lm.id);
+    }
+    for (const story of stories) {
+      assert(story.key && story.zh && story.en, 'Storyline needs key, zh and en');
+      assert(story.descZh && story.descEn, `Storyline ${story.key} needs bilingual descriptions`);
+      const castIds = new Set();
+      for (const c of story.cast) {
+        assert(!castIds.has(c.id), `Storyline ${story.key} repeats cast id ${c.id}`);
+        castIds.add(c.id);
+        assert(
+          c.person ? profileKeys.has(c.person) : Boolean(c.zh && c.en),
+          `Storyline ${story.key} cast ${c.id} needs a real person key, or both zh and en names`
+        );
+        assert(story.sides[c.side], `Storyline ${story.key} cast ${c.id} has unknown side ${c.side}`);
+      }
+      for (const step of story.steps) {
+        const label = step.event || step.milestone;
+        assert(
+          step.milestone || eventIds.has(step.event),
+          `Storyline ${story.key} points at unknown event ${label}`
+        );
+        const named = [...(step.leads || []), ...(step.others || [])];
+        for (const id of [...named, ...Object.keys(step.from || {}), ...Object.keys(step.at || {})]) {
+          assert(castIds.has(id), `Storyline ${story.key} step ${label} names unknown cast ${id}`);
+        }
+      }
+      const state = ctrl._buildStorylineState(ctrl._storylineProfile(story.key));
+      assert(
+        state && state.events.length === story.steps.length,
+        `Storyline ${story.key} has steps that do not resolve to an event`
+      );
+      state.events.forEach((ev, i) => {
+        const prev = state.events[i - 1];
+        if (!prev) return;
+        const sameYearMonths = ev.year === prev.year && ev.month != null && prev.month != null;
+        assert(
+          ev.year >= prev.year && (!sameYearMonths || ev.month >= prev.month),
+          `Storyline ${story.key} step ${i + 1} is out of date order`
+        );
+      });
+    }
+  }
+
   {
     assert(
       Array.isArray(loreData.PERSON_PROFILES) && loreData.PERSON_PROFILES.length >= 100,

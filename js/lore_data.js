@@ -4023,6 +4023,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "睢阳（商丘）",
       "siteEn": "Suiyang (Shangqiu)",
+      "id": "ex-suiyang",
       "zh": "睢阳之战：张巡、许远数千人死守十月，屏障江淮财赋，城破殉国",
       "en": "Siege of Suiyang: Zhang Xun and Xu Yuan hold out ten months, shielding the Jianghuai tax base"
     },
@@ -4035,6 +4036,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "邺城（相州）",
       "siteEn": "Yecheng (Xiangzhou)",
+      "id": "ex-yecheng",
       "zh": "邺城之战：九节度围安庆绪，史思明来援唐军溃散，遂杀安庆绪称帝再陷洛阳",
       "en": "Battle of Yecheng: Shi Siming routs nine Tang governors, kills An Qingxu, takes the Yan throne"
     },
@@ -5283,6 +5285,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "潼关",
       "siteEn": "Tongguan Pass",
+      "id": "ex-tongguan-fall",
       "zh": "哥舒翰奉诏出潼关中伏惨败，潼关失守，京师门户洞开",
       "en": "Geshu Han is ambushed outside Tongguan Pass; the pass falls, exposing Chang'an",
       "month": 6
@@ -5694,6 +5697,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "灵武",
       "siteEn": "Lingwu",
+      "id": "ex-lingwu",
       "zh": "长安失守，太子李亨北上朔方军治所灵武即位为唐肃宗号令平叛",
       "en": "Crown Prince Li Heng ascends the throne as Emperor Suzong at Lingwu to rally Tang forces"
     },
@@ -8047,6 +8051,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "马嵬驿（兴平）",
       "siteEn": "Mawei Post (Xingping)",
+      "id": "ex-mawei",
       "zh": "潼关失守唐玄宗弃长安奔蜀，至马嵬驿禁军哗变诛宰相杨国忠",
       "en": "Fleeing toward Sichuan, imperial guards mutiny at Mawei and slay Chancellor Yang Guozhong",
       "month": 6.5
@@ -9648,6 +9653,7 @@ window.ATLAS_LORE_DATA = {
       ],
       "site": "洛阳宫",
       "siteEn": "Luoyang Palace",
+      "id": "ex-anlushan-death",
       "zh": "安禄山据洛阳称燕帝后双目失明，正月为子安庆绪夜袭所弑",
       "en": "Blind and tyrannical in Luoyang, Yan emperor An Lushan is assassinated at night by his son"
     },
@@ -13095,6 +13101,7 @@ window.ATLAS_LORE_DATA = {
       "persons": [
         "anlushan"
       ],
+      "id": "ex-yan-throne",
       "zh": "安禄山攻陷东都洛阳，正月于洛阳自立为大燕皇帝，改元圣武",
       "en": "An Lushan captures the eastern capital Luoyang and proclaims himself Emperor of Great Yan"
     }

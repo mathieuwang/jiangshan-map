@@ -28,6 +28,9 @@ const STATIC_TAG_ASSETS = [
   'js/atlas_boot.js',
   'js/map_data.js',
   'js/lore_data.js',
+  'js/lore_anshi_persons.js',
+  'js/lore_anshi_events.js',
+  'js/lore_storylines.js',
   'js/zh_hant.js',
   ...CONTROLLER_SCRIPTS,
 ];
