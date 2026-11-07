@@ -3933,6 +3933,7 @@ window.ATLAS_LORE_DATA = {
       "en": "Fu Jian (Emperor Jingming) establishes the Former Qin dynasty at capital Chang'an"
     },
     {
+      "id": "ex-fj-throne",
       "dynastyKey": "dongjin",
       "year": 357,
       "coord": [
@@ -7859,6 +7860,7 @@ window.ATLAS_LORE_DATA = {
       "en": "Xie An emerges from forty years of seclusion at Mt. Dongshan to steady the Eastern Jin court"
     },
     {
+      "id": "ex-feishui",
       "dynastyKey": "dongjin",
       "year": 383,
       "coord": [
@@ -9619,6 +9621,7 @@ window.ATLAS_LORE_DATA = {
       "en": "Deng Ai authors On Canal Irrigation and builds vast military-farm colonies across Huainan"
     },
     {
+      "id": "ex-fangtou",
       "dynastyKey": "dongjin",
       "year": 369,
       "coord": [

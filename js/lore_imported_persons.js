@@ -1,6 +1,6 @@
 // People imported from the standard histories, for storylines.
 // Load after lore_data.js. Each profile follows the PERSON_PROFILES shape.
-// `spanBasis` records how the lifespan was set: 'source' means 《旧唐书》 or Wikidata give both
+// `spanBasis` records how the lifespan was set: 'source' means the history or Wikidata gives both
 // years; 'birth-estimated' means the birth year is an estimate and only the death year is sourced.
 (function () {
   const lore = window.ATLAS_LORE_DATA;
@@ -405,6 +405,78 @@
       spanBasis: 'source',
       aliases: ['房次律'],
       tokens: ['房琯'],
+    },
+    {
+      key: 'wangmeng',
+      zh: '王猛',
+      en: 'Wang Meng',
+      courtesyZh: '字景略 · 前秦丞相 · 苻坚的孔明',
+      courtesyEn: 'Chief minister of Former Qin and Fu Jian’s closest adviser',
+      dynastyKey: 'dongjin',
+      span: [325, 375],
+      spanBasis: 'source',
+      aliases: ['王景略'],
+      tokens: ['王猛'],
+    },
+    {
+      key: 'furong',
+      zh: '苻融',
+      en: 'Fu Rong',
+      courtesyZh: '字博休 · 苻坚季弟 · 阳平公',
+      courtesyEn: 'Fu Jian’s youngest brother, Duke of Yangping, killed at the Fei River',
+      dynastyKey: 'dongjin',
+      span: [340, 383],
+      spanBasis: 'birth-estimated',
+      aliases: ['苻博休', '阳平公'],
+      tokens: ['苻融'],
+    },
+    {
+      key: 'murongchui',
+      zh: '慕容垂',
+      en: 'Murong Chui',
+      courtesyZh: '字道明 · 奔秦复叛 · 后燕开国',
+      courtesyEn: 'Yan prince who fled to Fu Jian, then rebelled and founded Later Yan',
+      dynastyKey: 'dongjin',
+      span: [326, 396],
+      spanBasis: 'source',
+      aliases: ['慕容霸', '后燕成武帝'],
+      tokens: ['慕容垂'],
+    },
+    {
+      key: 'murongwei',
+      zh: '慕容暐',
+      en: 'Murong Wei',
+      courtesyZh: '前燕末帝 · 降秦后谋杀苻坚',
+      courtesyEn: 'Last ruler of Former Yan, who later plotted to kill Fu Jian',
+      dynastyKey: 'dongjin',
+      span: [350, 384],
+      spanBasis: 'source',
+      aliases: ['前燕幽帝'],
+      tokens: ['慕容暐'],
+    },
+    {
+      key: 'murongchong',
+      zh: '慕容冲',
+      en: 'Murong Chong',
+      courtesyZh: '小字凤皇 · 西燕皇帝 · 破长安',
+      courtesyEn: 'Emperor of Western Yan, who besieged and took Chang’an',
+      dynastyKey: 'dongjin',
+      span: [359, 386],
+      spanBasis: 'birth-estimated',
+      aliases: ['凤皇', '西燕威帝'],
+      tokens: ['慕容冲'],
+    },
+    {
+      key: 'yaochang',
+      zh: '姚苌',
+      en: 'Yao Chang',
+      courtesyZh: '字景茂 · 羌人首领 · 后秦开国',
+      courtesyEn: 'Qiang leader who served Fu Jian, killed him and founded Later Qin',
+      dynastyKey: 'dongjin',
+      span: [330, 393],
+      spanBasis: 'source',
+      aliases: ['后秦武昭帝'],
+      tokens: ['姚苌'],
     }
   );
 

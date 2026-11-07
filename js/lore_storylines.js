@@ -32,6 +32,10 @@
   const XIANGYANG = [112.14, 32.04];
   const XUCHANG = [113.85, 34.03];
   const YE = [114.35, 36.32];
+  const JIANKANG = [118.8, 32.06];
+  const HUAYIN = [110.09, 34.57];
+  const YUNCHENG = [113.69, 31.26];
+  const PINGYANG = [111.52, 36.08];
   const CHANGSHAN = [114.57, 38.14];
 
   lore.STORYLINES = [
@@ -362,6 +366,93 @@
         { event: 'df-xia' },
         { event: 'df-leiyang' },
         { event: 'ex-df-end' },
+      ],
+    },
+    {
+      key: 'fujian',
+      zh: '苻坚一生',
+      en: 'The Life of Fu Jian',
+      subtitleZh: '338—385 · 前秦天王的宏图与败亡',
+      subtitleEn: '338–385, the rise and fall of Former Qin’s Heavenly King',
+      descZh:
+        '红线是苻坚一生的行迹，从邺城出生到新平被杀。他重用王猛统一北方，优容慕容垂、姚苌等降将，却在淝水一败之后，死于这些旧部之手。部分步骤转到他人，此时苻坚留在原地。',
+      descEn:
+        'The red line is Fu Jian’s path from his birth in Ye to his death at Xinping. With Wang Meng he united the north and spared defeated rivals such as Murong Chui and Yao Chang, who turned on him after the Fei River. Some steps follow others, and Fu Jian stays where he was.',
+      aliases: ['苻坚', '苻永固', '前秦世祖', 'Fu Jian'],
+      dynastyKey: 'dongjin',
+      span: [338, 385],
+      protagonist: 'fujian',
+      sides: {
+        hero: { zh: '苻坚', en: 'Fu Jian', color: '#c4281c' },
+        qin: { zh: '前秦', en: 'Former Qin', color: '#186a4b' },
+        rival: { zh: '燕与后秦', en: 'Yan and Later Qin', color: '#233b8e' },
+        jin: { zh: '东晋', en: 'Eastern Jin', color: '#7a2e68' },
+      },
+      cast: [
+        { id: 'fujian', person: 'fujian', side: 'hero' },
+        { id: 'wangmeng', person: 'wangmeng', side: 'qin' },
+        { id: 'furong', person: 'furong', side: 'qin' },
+        { id: 'fupi', zh: '苻丕', en: 'Fu Pi', side: 'qin' },
+        { id: 'murongchui', person: 'murongchui', side: 'rival' },
+        { id: 'murongwei', person: 'murongwei', side: 'rival' },
+        { id: 'murongchong', person: 'murongchong', side: 'rival' },
+        { id: 'yaochang', person: 'yaochang', side: 'rival' },
+        { id: 'huanwen', person: 'huanwen', side: 'jin' },
+        { id: 'xiean', person: 'xiean', side: 'jin' },
+        { id: 'xiexuan', person: 'xiexuan', side: 'jin' },
+        { id: 'zhuxu', zh: '朱序', en: 'Zhu Xu', side: 'jin' },
+      ],
+      steps: [
+        { event: 'fj-birth' },
+        { event: 'fj-street' },
+        { event: 'fj-longxiang' },
+        { side: true, event: 'wm-huanwen', leads: ['wangmeng', 'huanwen'] },
+        { event: 'wm-meet', leads: ['wangmeng'], from: { wangmeng: HUAYIN } },
+        { event: 'fj-sanyuan', leads: ['yaochang'] },
+        { event: 'ex-fj-throne', month: 6, others: ['wangmeng'] },
+        { event: 'fj-tongbi' },
+        { event: 'wm-qiangde', leads: ['wangmeng'] },
+        { event: 'fj-shuofang' },
+        { side: true, event: 'ex-fangtou', month: 9, leads: ['huanwen', 'murongchui'] },
+        { event: 'mc-flee', leads: ['murongchui'], others: ['wangmeng'] },
+        { event: 'wm-farewell', leads: ['wangmeng'] },
+        { side: true, event: 'wm-luchuan', leads: ['wangmeng'], others: ['murongwei'], at: { murongwei: YE } },
+        { event: 'fj-anyang', leads: ['wangmeng'] },
+        { event: 'fj-ye', leads: ['murongwei'], others: ['wangmeng', 'murongchui'] },
+        { event: 'fj-fangtou' },
+        { event: 'wei-move', leads: ['murongwei', 'murongchong'], from: { murongchong: YE } },
+        { event: 'wm-death', leads: ['wangmeng'] },
+        { side: true, milestone: 'dongjin:376', month: 12 },
+        { side: true, event: 'xy-fall', leads: ['fupi', 'zhuxu'], from: { fupi: CHANGAN } },
+        { event: 'fj-fenzu', leads: ['fupi'] },
+        { event: 'fj-debate', leads: ['furong'] },
+        { event: 'fj-march', others: ['furong', 'murongchui'] },
+        { event: 'fj-xiangcheng' },
+        {
+          event: 'fj-shouchun',
+          leads: ['furong'],
+          others: ['zhuxu', 'murongchui', 'murongwei'],
+          at: { murongchui: YUNCHENG, murongwei: YUNCHENG },
+        },
+        {
+          event: 'ex-feishui',
+          month: 11,
+          leads: ['furong', 'xiexuan'],
+          others: ['xiean', 'zhuxu'],
+          at: { xiean: JIANKANG },
+        },
+        { event: 'fj-huaibei' },
+        { event: 'fj-mianchi', leads: ['murongchui'] },
+        { event: 'fj-return', others: ['murongwei'] },
+        { side: true, event: 'mc-rebel', leads: ['murongchui'] },
+        { side: true, event: 'ys-rebel', leads: ['yaochang'] },
+        { event: 'fj-zhaoshi', leads: ['yaochang'] },
+        { event: 'ch-wall', leads: ['murongchong'], from: { murongchong: PINGYANG } },
+        { event: 'wei-death', leads: ['murongwei'] },
+        { event: 'fj-wujiang' },
+        { side: true, event: 'ch-changan', leads: ['murongchong'] },
+        { event: 'fj-captured', leads: ['yaochang'] },
+        { event: 'fj-end', leads: ['yaochang'] },
       ],
     },
   ];
