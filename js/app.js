@@ -346,6 +346,17 @@
     }
   }
 
+  // Record categories (`cat: [...]`, primary first); chip colours in css/style.css.
+  const EVENT_CATEGORIES = {
+    politics: { zh: '政', name: '政治', en: 'Politics' },
+    military: { zh: '军', name: '军事', en: 'Military' },
+    diplomacy: { zh: '交', name: '外交', en: 'Diplomacy' },
+    culture: { zh: '文', name: '文化', en: 'Culture' },
+    economy: { zh: '经', name: '经济', en: 'Economy' },
+    science: { zh: '技', name: '科技', en: 'Science' },
+    disaster: { zh: '灾', name: '灾异', en: 'Disaster' },
+  };
+
   const SVG_ICONS = {
     pin: '<svg class="ico-svg" viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><path d="M8 1.5a4.4 4.4 0 0 0-4.4 4.4c0 3.2 4.4 8.6 4.4 8.6s4.4-5.4 4.4-8.6A4.4 4.4 0 0 0 8 1.5zm0 6a1.6 1.6 0 1 1 0-3.2 1.6 1.6 0 0 1 0 3.2z" fill="currentColor"/></svg>',
     mapChange:
@@ -1086,6 +1097,75 @@
         return window.ZH_HANT_CONV.toHant(text);
       }
       return text;
+    }
+
+    // Category chips (`cat` array, max 3); a chip click filters its list, see _applyCatFilter.
+    _catChipsHtml(cats) {
+      const en = this.locale === 'en';
+      const html = (cats || [])
+        .filter((c) => EVENT_CATEGORIES[c])
+        .slice(0, 3)
+        .map((c) => {
+          const d = EVENT_CATEGORIES[c];
+          const n = en ? d.en : this._zh(d.name);
+          return `<button type="button" class="ev-cat-chip" data-cat="${c}" aria-label="${n}" title="${n}${en ? ' — show only these' : this._zh(' · 只看同类')}">${this._zh(d.zh)}</button>`;
+        })
+        .join('');
+      return html && `<span class="ev-cat-chips">${html}</span>`;
+    }
+
+    _bindCatChips(li, listEl, scope) {
+      for (const b of li.querySelectorAll('.ev-cat-chip')) {
+        b.onclick = (e) => {
+          e.stopPropagation();
+          const st = this._catFilterState(listEl.id, scope);
+          st.cat = st.cat === b.dataset.cat ? null : b.dataset.cat;
+          this._applyCatFilter(listEl, scope);
+        };
+      }
+    }
+
+    // One filter per list, reset when its scope (dynasty, person) changes.
+    _catFilterState(id, scope) {
+      const all = (this._catFilters = this._catFilters || {});
+      if (!all[id] || all[id].scope !== scope) all[id] = { scope, cat: null };
+      return all[id];
+    }
+
+    // Hide rows whose data-cats lacks the active category; show a clearable bar above the list.
+    _applyCatFilter(listEl, scope) {
+      if (!listEl || !listEl.querySelectorAll) return;
+      const cat = this._catFilterState(listEl.id, scope).cat;
+      let shown = 0;
+      for (const li of listEl.children) {
+        const hit = !cat || (li.dataset.cats || '').split(' ').includes(cat);
+        if (li.classList) li.classList.toggle('is-cat-hidden', !hit);
+        if (hit && cat) shown++;
+      }
+      for (const b of listEl.querySelectorAll('.ev-cat-chip')) {
+        b.classList.toggle('is-active', b.dataset.cat === cat);
+        b.setAttribute('aria-pressed', String(b.dataset.cat === cat));
+      }
+      let bar = this._id(`${listEl.id}-catbar`);
+      if (!cat) return bar && bar.parentNode && bar.parentNode.removeChild(bar);
+      if (!bar) {
+        bar = document.createElement('div');
+        bar.id = `${listEl.id}-catbar`;
+        bar.className = 'cat-filter-bar';
+        if (listEl.parentNode) listEl.parentNode.insertBefore(bar, listEl);
+      }
+      const en = this.locale === 'en';
+      const d = EVENT_CATEGORIES[cat];
+      const x = en ? 'Clear filter' : this._zh('清除筛选');
+      bar.innerHTML =
+        `<span class="ev-cat-chip is-active" data-cat="${cat}">${this._zh(d.zh)}</span>` +
+        `<b>${en ? d.en : this._zh(d.name)}</b><span>${en ? `${shown} entries` : this._zh(`共 ${shown} 条`)}</span>` +
+        `<button type="button" class="cat-filter-clear" title="${x}" aria-label="${x}">×</button>`;
+      bar.lastChild.onclick = (e) => {
+        e.stopPropagation();
+        this._catFilterState(listEl.id, scope).cat = null;
+        this._applyCatFilter(listEl, scope);
+      };
     }
 
     _toHans(text) {
@@ -5493,6 +5573,7 @@
       const ul = this._id('milestone-list');
       if (ul) {
         ul.innerHTML = '';
+        this._applyCatFilter(ul, 'polity'); // drop a dynasty list's category filter bar
         this._lastHighlightedMilestoneKey = null;
         const events = this._polityEvents(desc);
         this._polityEventsCache = events;
@@ -6052,7 +6133,10 @@
         const storyBadge = storyHit
           ? `<button type="button" class="ev-seal-tag ev-story-tag" title="${this.locale === 'en' ? 'Event Storyline — click to trace the full multi-act campaign' : `大事件全脉络 · 点击展开「${storyHit.titleZh || '大事件'}」时空推演`}">${this.locale === 'en' ? 'Story' : '始末'}</button>`
           : '';
-        li.innerHTML = `<span class="ev-yr">${yrLabel}</span><span>${this.milestoneHeadline(dynasty, m)}${badge}${sealBadge}${storyBadge}</span>`;
+        const catChips = this._catChipsHtml(m.cat);
+        li.dataset.cats = Array.isArray(m.cat) ? m.cat.join(' ') : '';
+        li.innerHTML = `<span class="ev-yr">${yrLabel}</span><span>${this.milestoneHeadline(dynasty, m)}${badge}${sealBadge}${storyBadge}${catChips}</span>`;
+        this._bindCatChips(li, ul, dynasty.key);
         const sealBtn = li.querySelector('.ev-seal-tag:not(.ev-story-tag)');
         if (sealBtn && relicStopIdx !== null) {
           sealBtn.addEventListener('click', (e) => {
@@ -6102,6 +6186,7 @@
         });
         ul.appendChild(li);
       }
+      this._applyCatFilter(ul, dynasty.key);
       this._updateMobileChronicleBtn(dynasty);
       this._highlightCurrentMilestone(dynasty);
       if (this.locale === 'zh-tw') this._applyZhHantDom(this._id('chronicle-pane'));
@@ -10786,6 +10871,7 @@
   };
   HistoricalAtlasController._escHtml = escHtml;
   HistoricalAtlasController._svgIcons = SVG_ICONS;
+  HistoricalAtlasController.EVENT_CATEGORIES = EVENT_CATEGORIES;
   HistoricalAtlasController._projectorClass = MercatorProjector;
   HistoricalAtlasController._eraDynastyPrefixes = ERA_DYNASTY_PREFIXES;
 

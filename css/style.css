@@ -2848,6 +2848,120 @@ html.deeplink-boot #inp-year {
   transform: scale(1.08);
 }
 
+/* Event category chips: one character in a tinted box (solid when its filter is on).
+   Inks are checked at >= 4.5:1 on their own tint over parchment. */
+.ev-cat-chip[data-cat='politics'] { --cat-ink: #8a4a12; --cat-tint: rgba(138, 74, 18, 0.14); }
+.ev-cat-chip[data-cat='military'] { --cat-ink: #b3261e; --cat-tint: rgba(179, 38, 30, 0.14); }
+.ev-cat-chip[data-cat='diplomacy'] { --cat-ink: #0f6660; --cat-tint: rgba(15, 102, 96, 0.14); }
+.ev-cat-chip[data-cat='culture'] { --cat-ink: #6b3fa0; --cat-tint: rgba(107, 63, 160, 0.14); }
+.ev-cat-chip[data-cat='economy'] { --cat-ink: #745803; --cat-tint: rgba(116, 88, 3, 0.14); }
+.ev-cat-chip[data-cat='science'] { --cat-ink: #2160a6; --cat-tint: rgba(33, 96, 166, 0.14); }
+.ev-cat-chip[data-cat='disaster'] { --cat-ink: #5d554c; --cat-tint: rgba(93, 85, 76, 0.14); }
+
+.ev-cat-chips {
+  display: inline-flex;
+  gap: 2px;
+  margin-left: 5px;
+  vertical-align: 1px;
+}
+
+.ev-cat-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  border-radius: 3px;
+  border: 1px solid var(--cat-ink, var(--text-muted));
+  background: var(--cat-tint, transparent);
+  color: var(--cat-ink, var(--text-muted));
+  font-family: var(--serif-stack);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.12s, background 0.12s, color 0.12s;
+}
+
+.ev-cat-chip:hover {
+  transform: scale(1.1);
+}
+
+.ev-cat-chip:focus-visible {
+  outline: 2px solid var(--cat-ink, var(--text-main));
+  outline-offset: 1px;
+}
+
+.ev-cat-chip.is-active {
+  background: var(--cat-ink, var(--text-muted));
+  color: #fffaf0;
+}
+
+/* Touch screens get a bigger hit area without changing the drawn size. */
+@media (pointer: coarse) {
+  .ev-cat-chip {
+    position: relative;
+  }
+  .ev-cat-chip::after {
+    content: '';
+    position: absolute;
+    inset: -7px -3px;
+  }
+}
+
+li.is-cat-hidden {
+  display: none !important;
+}
+
+.cat-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 6px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--hairline);
+  background: var(--bg-parchment-alt);
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.cat-filter-bar .ev-cat-chip {
+  cursor: default;
+}
+
+.cat-filter-bar .ev-cat-chip:hover {
+  transform: none;
+}
+
+.cat-filter-bar b {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.cat-filter-bar b + span {
+  color: var(--text-muted);
+}
+
+.cat-filter-clear {
+  margin-left: auto;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cat-filter-clear:hover {
+  background: var(--hairline);
+  color: var(--text-main);
+}
+
 #milestone-list .ev-src {
   grid-column: 1 / -1;
   padding-top: 5px;

@@ -12,6 +12,12 @@
   let escHtml = null;
   let SVG_ICONS = null;
 
+  const mergeCats = (a, b) => {
+    const out = Array.isArray(a) ? [...a] : [];
+    for (const c of Array.isArray(b) ? b : []) if (!out.includes(c)) out.push(c);
+    return out.length ? out : undefined;
+  };
+
   class AtlasTraceMixin {
     // ---------------- Place Genealogy (Trace Place) ----------------
     toggleGenealogySheetExpand(force) {
@@ -599,6 +605,7 @@
             if (jHit) {
               if (m.isMapChange) jHit.isMapChange = true;
               if (!jHit.milestone) jHit.milestone = m;
+              jHit.cat = mergeCats(jHit.cat, m.cat);
             }
             continue;
           }
@@ -649,6 +656,7 @@
             isMapChange: Boolean(m.isMapChange),
             byPersonsTag: byTag,
             milestone: m,
+            cat: m.cat,
             prio: 2,
           });
         }
@@ -696,6 +704,7 @@
           textEn: tailored.textEn,
           isMapChange: false,
           byPersonsTag: byTag,
+          cat: lm.cat,
           prio: 1,
         });
       }
@@ -743,6 +752,7 @@
           if (drop.isMapChange) keep.isMapChange = true;
           if (drop.byPersonsTag) keep.byPersonsTag = true;
           if (drop.milestone && !keep.milestone) keep.milestone = drop.milestone;
+          keep.cat = mergeCats(keep.cat, drop.cat);
           if (keep === ev) deduped[deduped.indexOf(dup)] = ev;
           continue;
         }
@@ -2671,6 +2681,7 @@
       listEl.innerHTML = '';
 
       let activeLi = null;
+      const catScope = `person:${isMulti ? profiles.map((p) => p.key).join(',') : profile.key}`;
       events.forEach((ev, idx) => {
         const isShared = Boolean(ev.isSharedEncounter);
         const li = document.createElement('li');
@@ -2776,10 +2787,13 @@
         li.innerHTML =
           `<span class="t-era person-era-col">${leftBadgeHtml}</span>` +
           `<span class="t-val">` +
-          `<span class="person-site-line"><span>${siteLabel}${mapBadge}</span>${traceBtn}</span>` +
+          `<span class="person-site-line"><span>${siteLabel}${mapBadge}${this._catChipsHtml(ev.cat)}</span>${traceBtn}</span>` +
           `${copyHtml}` +
           `${quoteHtml}` +
           `</span>`;
+
+        li.dataset.cats = Array.isArray(ev.cat) ? ev.cat.join(' ') : '';
+        this._bindCatChips(li, listEl, catScope);
 
         li.querySelectorAll('.story-inline-person').forEach((btn) => {
           btn.addEventListener('click', (e) => {
@@ -2824,6 +2838,7 @@
         }
         listEl.appendChild(li);
       });
+      this._applyCatFilter(listEl, catScope);
 
       if (scrollEl) {
         if (activeLi && typeof activeLi.scrollIntoView === 'function') {
